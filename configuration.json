@@ -1,0 +1,10 @@
+{
+    "modules":[
+        {
+            "name":"lora",
+            "type":"wireless",
+            "path":"modules/lora-lib",
+            "class":"LoraE5"
+        }
+    ]
+}
