@@ -1,6 +1,16 @@
+
+
+
+
+# TODO: migrate to new workings
+
+
+
+
+
 import serial
 from threading import Lock
-from types.wireless import WirelessModule
+from types.wireless import WirelessModule, Modes, Regions
 
 class LoRa_Commands:
     at = ""
