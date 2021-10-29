@@ -8,7 +8,7 @@ from .data_handler import Data_Handler
 
 class Display_Handler(Peripheric_Handler):
     def __init__(self, client_conn: socket.socket, client_addr: List, name: str, data_handler: Data_Handler) -> None:
-        logging.debug('Loaded display handler for ' + name)
+        logging.debug('Loaded display handler for ' + str(name))
         super().__init__(client_conn, client_addr, name, data_handler)
 
     def run(self) -> None:

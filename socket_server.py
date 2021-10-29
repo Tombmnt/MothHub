@@ -58,7 +58,12 @@ class Client_Thread(threading.Thread):
 
         logging.debug("Checking client type for " + str(client_addr))
         b_data = client_conn.recv(4096)
-        data = json.loads(b_data.decode('utf-8'))
+        if(b_data):
+            data = json.loads(b_data.decode('utf-8'))
+        else:
+            logging.error("Client did not sent identifier, closing... ")
+            client_conn.close()
+            sys.exit()
 
         if(data["type"] == peripheral_types.display):
             logging.debug("Client is type " + peripheral_types.display)

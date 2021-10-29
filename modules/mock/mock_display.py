@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import List
 import numpy as np
 import threading
 import pyglet
@@ -7,7 +7,7 @@ from ..types.peripherals import peripheral_types
 
 class Mock_Display_Peripheral(Generic_Peripheral):
     def __init__(self, w, h, periph_name: str, host_ip: str, port: int = None) -> None:
-        super().__init__(host_ip, port)
+        super().__init__(peripheral_types.display, periph_name, host_ip, port)
 
         self.width = w
         self.height = h
@@ -18,26 +18,18 @@ class Mock_Display_Peripheral(Generic_Peripheral):
 
         self.display = threading.Thread(target=self.display_thread, daemon=True).start()
 
-        self.type = peripheral_types.display
-        self.name = periph_name
-
     def convert_frame(self) -> List:
         raw_data = self.frame_data.flatten()
         return (pyglet.gl.glu.GLubyte * len(raw_data))(*raw_data)
 
     def run(self) -> None:
-        self.socket_client.send_data({
-            "type": self.type,
-            "name": self.name
-        })
-
         while(1):
             data = self.socket_client.recieve_data()
-
-            if(data["command"] == "square"):
-                self.add_colored_quare(data["pos_x"], data["pos_y"], data["width"], data["height"], data["color"])
-            elif(data["command"] == "speed"):
-                self.speed = data["value"]
+            if(data):
+                if(data["command"] == "square"):
+                    self.add_colored_quare(data["pos_x"], data["pos_y"], data["width"], data["height"], data["color"])
+                elif(data["command"] == "speed"):
+                    self.speed = data["value"]
 
     # Draws a colored square on the screen
     # requires a "command" as a dict:
