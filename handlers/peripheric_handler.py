@@ -32,7 +32,6 @@ class Peripheric_Handler():
                     logging.error('[' + self.name + '] Client lost, exiting.')
                     sys.exit() # kill this thread. 
         
-
     def recieve_data(self) -> Dict:
         try:
             b_data = self.sock.recv(4096)
