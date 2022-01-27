@@ -1,21 +1,30 @@
+from datetime import datetime
 from os import error
 import socket, json, logging, time, sys
 from typing import Dict, List
-from handlers.data_handler import Data_Handler
+from database_service import Database_Service
 
 MAX_TRIES = 10
 
 class Peripheric_Handler():
-    def __init__(self, client_conn: socket.socket, client_addr: List, name: str, data_handler: Data_Handler) -> None:
+    def __init__(self, client_conn: socket.socket, client_addr: List, name: str, database_service: Database_Service, database_name: str) -> None:
         self.client_conn = client_conn
         self.client_addr = client_addr
-        self.data_handler = data_handler
         self.name = name
+        self._database_service = database_service
+        self._database_name = database_name
 
     def run(self) -> None:
         raise NotImplementedError("Please write a run method for your peripheral handler!")
 
-    def send_data(self, data:Dict) -> None:
+    def save_data(self, data: Dict) -> None:
+        self._database_service.insert_data(self._database_name, data)
+
+    # from_date has to be further in time than to_date. Ex: from 25/02/2022 to 30/02/2022
+    def load_data(self, from_date: datetime, to_date: datetime) -> List:
+        return self._database_service.obtain_data(self._database_name, from_date, to_date)
+
+    def send_data(self, data: Dict) -> None:
 
         b_data = json.dumps(data).encode('utf-8')
 

@@ -2,7 +2,7 @@ import socket, sys, threading, logging, json
 from time import sleep
 from typing import List
 
-from handlers.data_handler import Data_Handler
+from database_service import Database_Service
 from handlers.display_handler import Display_Handler
 from modules.types.peripherals import peripheral_types
 
@@ -12,7 +12,7 @@ PORT = 6684  # moth on a phone
 #Server starts as a Thread itself to allow main program to continue with it's jobs
 class Socket_Server(threading.Thread):
 
-    def __init__(self, data_handler: Data_Handler) -> None:
+    def __init__(self, data_handler: Database_Service) -> None:
         threading.Thread.__init__(self)
 
         self.daemon = False #daemon threads are killed when main thread exits, non-daemon threads will force to main thread to wait.
@@ -52,7 +52,7 @@ class Socket_Server(threading.Thread):
         self.running = False
 
 class Client_Thread(threading.Thread):
-    def __init__(self, client_conn : socket.socket, client_addr : List, data_handler: Data_Handler):
+    def __init__(self, client_conn : socket.socket, client_addr : List, data_handler: Database_Service):
         threading.Thread.__init__(self)
         self.peripheric_handler = None
 
