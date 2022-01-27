@@ -2,10 +2,29 @@
 # Base template from https://gist.github.com/opie4624/3896526 
 
 import argparse, logging
+from datetime import datetime, timedelta
+from typing import Dict
 from colorama import init as colorama_init
-from handlers.data_handler import Data_Handler
+from database_service import Database_Service
 
 from socket_server import Socket_Server
+
+# These functions are for debugging and not for using for anything useful
+def print_cbk(new_data: Dict):
+    print(f"New data on test db: {new_data}")
+
+def test_db(db: Database_Service):
+    db.insert_data("test", {"key1":"value1", "key2":1234})
+
+    db.register_callback("test", print_cbk)
+    db.insert_data("test", {"key3":"value1", "key4":"Hello WORLD!"})
+
+    db.unregister_callback("test", print_cbk)
+    db.insert_data("test", {"key5":"value999", "key6":42})
+
+    data = db.obtain_data("test", datetime.now() - timedelta(seconds=20), datetime.now())
+    print(data)
+# ---- End -----
 
 def main(args, loglevel):
     logging.basicConfig(format="%(levelname)s: %(message)s", level=loglevel)
