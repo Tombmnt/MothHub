@@ -63,7 +63,8 @@ class Database_Service():
         self._run_callbacks(module_name, data)
     
     # from_date has to be further in time than to_date. Ex: from 25/02/2022 to 30/02/2022
-    def obtain_data(self, module_name: str, from_date: datetime, to_date: datetime):
+    # Defaults to data up to this instant if only from is provided.
+    def obtain_data(self, module_name: str, from_date: datetime, to_date: datetime = datetime.now()):
         from_id = ObjectId.from_datetime(from_date.astimezone(timezone.utc))
         to_id = ObjectId.from_datetime(to_date.astimezone(timezone.utc))
         time_range_filter = {
