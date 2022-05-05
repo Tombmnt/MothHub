@@ -10,5 +10,8 @@ class Generic_Peripheral():
         else:
             self.socket_client = Socket_Client(self.type, self.name, host_ip)
 
+    def run(self):
+        raise NotImplementedError
+
     def __del__(self):
         self.socket_client.close_connection()
