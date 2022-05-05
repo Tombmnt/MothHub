@@ -8,6 +8,9 @@ from mongita.collection import Collection
 
 from bson import ObjectId
 
+# Handle races as object of data points
+# Be able to load only race metadata (start/end time, etc) without loading data points
+
 class DataCallback():
     def __init__(self, module_name: str, function: Callable) -> None:
         self.module_name = module_name
