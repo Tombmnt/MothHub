@@ -4,7 +4,7 @@
 import argparse, logging
 import threading
 from colorama import init as colorama_init
-from modules.mock.mock_display import Mock_Display_Peripheral
+from modules.mock.mock_display import MockDisplay
 
 localhost = "127.0.0.1"
 
@@ -12,7 +12,7 @@ def main(args, loglevel):
     logging.basicConfig(format="%(levelname)s: %(message)s", level=loglevel)
     log = logging.getLogger(__name__)
 
-    mock_display = Mock_Display_Peripheral(320, 240, args.name[0], localhost)
+    mock_display = MockDisplay(320, 240, args.name[0], localhost)
     mock_display.run()
 
 

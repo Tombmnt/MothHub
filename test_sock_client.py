@@ -1,6 +1,6 @@
 import logging
 from modules.socket_client import Socket_Client
-from modules.mock.mock_display import Mock_Display_Peripheral
+from modules.mock.mock_display import MockDisplay
 
 logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
 
@@ -22,7 +22,7 @@ black_square_msg = {
     "color":[0, 0, 0]
 }
 
-screen = Mock_Display_Peripheral(320, 240, "mock_display_1", "127.0.0.1")
+screen = MockDisplay(320, 240, "mock_display_1", "127.0.0.1")
 screen.run()
 
 logging.info("Done!")
