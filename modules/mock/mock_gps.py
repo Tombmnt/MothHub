@@ -12,7 +12,7 @@ class MockGPS(MqttPubModule):
     def send_random_speed(self):
         speed = random.randrange(0, 25)
         data = {
-            "time": datetime.datetime.utcnow(),
+            "time": int(datetime.datetime.utcnow().timestamp()),
             "type": "gps",
             "value": speed
         }
@@ -22,7 +22,7 @@ class MockGPS(MqttPubModule):
         lat = random.randrange(0, 25)
         lon = random.randrange(0, 25)
         data = {
-            "time": datetime.datetime.utcnow(),
+            "time": int(datetime.datetime.utcnow().timestamp()),
             "type": "gps",
             "latitude": lat,
             "longitude": lon
