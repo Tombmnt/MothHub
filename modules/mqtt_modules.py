@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 from modules.mqtt_utils import MqttPubClient, MqttSubClient
 
 class MqttSubModule:
-    def __init__(self, mqtt_topics: list[str], mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
+    def __init__(self, mqtt_topics: "list[str]", mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
         self.mqtt_clients: dict[str, MqttSubClient] = {}
         
         for topic in mqtt_topics:
@@ -13,7 +13,7 @@ class MqttSubModule:
         self.mqtt_clients[topic].message_callback_add(topic, callback)
 
 class MqttPubModule:
-    def __init__(self, mqtt_topics: list[str], mqtt_broker: str = "localhost", mqtt_broker_port = 1883) -> None:
+    def __init__(self, mqtt_topics: "list[str]", mqtt_broker: str = "localhost", mqtt_broker_port = 1883) -> None:
         self.mqtt_clients: dict[str, MqttPubClient] = {}
         
         for topic in mqtt_topics:
