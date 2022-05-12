@@ -42,7 +42,8 @@ class MQTTPacket:
             setattr(self, n, v)
     
     def reset_to_default(self):
-        for attr in self.__dict__.keys():
+        dict = self.__dict__.copy()
+        for attr in dict.keys():
             delattr(self, attr)
         self.__init__()
 
