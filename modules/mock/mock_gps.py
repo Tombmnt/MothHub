@@ -27,14 +27,15 @@ class MockGPS(MqttPubModule):
             "latitude": lat,
             "longitude": lon
         }
-        self.publish(MqttTopics.SPEED, json.dumps(data))
+        self.publish(MqttTopics.POSITION, json.dumps(data))
 
     def run(self):
         while(1):
             self.send_random_speed()
+            self.send_random_position()
             sleep(1)
 
-    # TODO: send random position and direction
+    # TODO: send random direction
 
 
 MockGPS().run()
