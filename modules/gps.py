@@ -36,7 +36,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
             print(f"{parsed_msg}")
 
             pos_data = MQTTPositionPkt(sender_type=SenderTypes.gps)
-            dt: datetime.datetime = 0.0
+            dt: datetime.datetime = datetime.datetime.utcnow()
                 
             if(parsed_msg.msgID == NMEA_MESSAGE_RMC):
                 # RMC message is the first relevant message we get per data burst, we can use it to send the timestamp for the whole burst.
@@ -61,7 +61,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                 self.publish(MqttTopics.POSITION, str(pos_data))
                 pos_data.reset_to_default()
                 pos_data.type = SenderTypes.gps
-                dt = 0.0
+                dt = datetime.datetime.utcnow()
 
             elif(parsed_msg.msgID == NMEA_MESSAGE_VTG):
                 spd_data = MQTTSpeedPkt(
