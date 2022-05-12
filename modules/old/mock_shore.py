@@ -1,3 +1,6 @@
+
+#TODO: update to MQTT
+
 from colorama.ansi import Style
 from ..types.wireless import Modes, WirelessModule, WrongModeException
 from colorama import Fore
