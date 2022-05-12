@@ -3,6 +3,7 @@ import paho.mqtt.client as mqtt
 
 @dataclass
 class MqttTopics:
+    ALL = "#"
     SPEED = "speed" # GPS/IMU speed
     DIRECTION = "direction" # (Heading) GPS
     ORIENTATION = "orientation" # IMU
