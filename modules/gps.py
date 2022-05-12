@@ -1,7 +1,4 @@
 import datetime
-import json
-from turtle import pos
-from xmlrpc.client import DateTime
 import serial 
 from pynmeagps import NMEAReader, NMEAMessage
 
