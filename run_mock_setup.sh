@@ -1,7 +1,9 @@
 #!bin/bash
 
-python3 run_mock_display.py -v -n "mock_display_1" &
-python3 run_mock_display.py -v -n "mock_display_2" &
+python3 -m modules.mock.mock_display &
+python3 -m modules.mock.mock_display &
+python3 -m modules.database &
+python3 -m modules.mock.mock_gps &
 
 read -rsp $'Press any key to quit...\n' -n1 key
 
