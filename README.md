@@ -23,7 +23,20 @@ You will need python, at least version 3.7 to run this suite.
 
     Linux:
     > source my-project-env/bin/activate
-5) Enjoy!
+5) Installe the requirements.
+
+    For a dev setup, able to run the mock modules:
+    
+    Windows:
+    > py -m pip install -r dev_requirements.txt
+
+    Linux:
+    > python3 -m pip install -r dev_requirements.txt
+
+    On the Pi or for a headless setup, only able to run the real suite (only linux):
+    > python3 -m pip install -r requirements.txt
+
+6) Enjoy!
 
 ## Running the suite
 To run the full hub on the Pi manually, use:
