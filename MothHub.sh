@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 python3 -m modules.database &
 python3 -m modules.gps &
