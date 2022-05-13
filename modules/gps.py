@@ -7,6 +7,10 @@ from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, Send
 from .mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
 
+ZED_F9P_SERIAL_PORT = "/dev/ttyS0"
+ZED_F9P_SERIAL_BAUD = 38400
+ZED_F9P_I2C_ADDR = 0x84
+
 # Available message types: 
 # ['$GNRMC', '$GNVTG', '$GNGGA', '$GNGSA', '$GPGSV', '$GLGSV', '$GAGSV', '$GBGSV', '$GNGLL']
 
@@ -22,7 +26,7 @@ NMEA_MESSAGE_GSV = "GSV"
 NMEA_MESSAGE_GLL = "GLL"
 
 class ZED_F9P_Hat_GPS(MqttPubModule):
-    def __init__(self, mqtt_broker: str = "localhost", mqtt_broker_port=1883, serial_port="/dev/ttyS0", baud="38400") -> None:
+    def __init__(self, mqtt_broker: str = "localhost", mqtt_broker_port=1883, serial_port=ZED_F9P_SERIAL_PORT, baud=ZED_F9P_SERIAL_BAUD) -> None:
         super().__init__([MqttTopics.POSITION, MqttTopics.SPEED], mqtt_broker, mqtt_broker_port)
 
         self.serial_con = serial.Serial(serial_port, baud, timeout=5)
