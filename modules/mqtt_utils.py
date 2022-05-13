@@ -1,3 +1,4 @@
+import logging as log
 from dataclasses import dataclass
 import paho.mqtt.client as mqtt
 
@@ -25,15 +26,15 @@ class MqttPubClient:
         
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(self, client: mqtt.Client, userdata, flags, rc):
-        print(f"Mqtt pub client for {self.mqtt_topic} connected with result code {rc}\n")
+        log.info(f"Mqtt pub client for {self.mqtt_topic} connected with result code {rc}\n")
 
     def on_publish(self, client: mqtt.Client, userdata, result):
-        #print(f"Published with result: {result}.")
+        #log.debug(f"Published with result: {result}.")
         pass
     
     def publish(self, message):
         ret = self.client.publish(self.mqtt_topic, message)
-        print(f"Published: [{self.mqtt_topic}]:{message}->{ret}\n")
+        log.debug(f"Published: [{self.mqtt_topic}]:{message}->{ret}\n")
 
 class MqttSubClient:
     def __init__(self, mqtt_topic: str, mqtt_broker: str = "localhost", mqtt_broker_port = 1883) -> None:
@@ -50,7 +51,7 @@ class MqttSubClient:
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(self, client: mqtt.Client, userdata, flags, rc):
-        print(f"Mqtt sub client for {self.mqtt_topic} connected with result code {rc}\n")
+        log.info(f"Mqtt sub client for {self.mqtt_topic} connected with result code {rc}\n")
 
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
@@ -58,7 +59,7 @@ class MqttSubClient:
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
-        print(f"Recieved: [{msg.topic}]:{msg.payload}\n")
+        log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
 
     def __del__(self):
         self.client.loop_stop()

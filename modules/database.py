@@ -1,6 +1,7 @@
 
 import datetime
 import json
+import logging as log
 from mongita import MongitaClientDisk
 from mongita.database import Database
 from mongita.collection import Collection
@@ -59,10 +60,11 @@ class MonginaDatabaseModule(MqttSubModule):
         self.mqtt_clients[MqttTopics.ALL].client.on_message = self.on_message
 
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
-        print(f"Recieved: [{msg.topic}]:{msg.payload}\n")
+        log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
         self.db_srv.insert_data(msg.topic, json.loads(msg.payload))
 
 class Database(MonginaDatabaseModule): pass
 
+log.basicConfig(level=log.INFO)
 db = Database()
 input("DB started, press enter to quit...")

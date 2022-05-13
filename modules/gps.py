@@ -1,5 +1,6 @@
 import datetime
 import serial 
+import logging as log
 from pynmeagps import NMEAReader, NMEAMessage
 
 from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, SenderTypes
@@ -37,7 +38,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
             parsed_msg: NMEAMessage = None
             _, parsed_msg = self.nmea_stream.read()
             # TODO: actuall logging 
-            print(f"{parsed_msg}")
+            log.debug(f"{parsed_msg}")
 
             pos_data = MQTTPositionPkt(sender_type=SenderTypes.gps)
             dt: datetime.datetime = datetime.datetime.utcnow()
@@ -82,5 +83,6 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
 
 class GPS(ZED_F9P_Hat_GPS): pass
 
+log.basicConfig(level=log.INFO)
 gps = GPS()
 gps.run()
