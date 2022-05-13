@@ -2,6 +2,8 @@
 import datetime
 import json
 import logging as log
+import signal
+import sys
 from mongita import MongitaClientDisk
 from mongita.database import Database
 from mongita.collection import Collection
@@ -56,12 +58,20 @@ class MonginaDatabaseModule(MqttSubModule):
         super().__init__([MqttTopics.ALL], mqtt_broker, mqtt_broker_port)
         self.db_srv = DatabaseService("rafale3")
 
+        # Setup gracefull exit on kill        
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
         # Exceptionaly overwriting the on_message method of the mqtt client because we want it called on ANY topic.
         self.mqtt_clients[MqttTopics.ALL].client.on_message = self.on_message
 
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
         self.db_srv.insert_data(msg.topic, json.loads(msg.payload))
+
+    def exit_gracefully(self):
+        self.db_srv._db_client.close()
+        sys.exit(0)
 
 class Database(MonginaDatabaseModule): pass
 
