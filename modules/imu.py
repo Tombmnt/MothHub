@@ -31,15 +31,16 @@ class BNO085IMU(MqttPubModule):
         #TODO: Calibrate?
     
     def run(self):
-        timestamp = int(datetime.datetime.utcnow().timestamp())
-        orientation = MQTTOrientationPkt(timestamp, SenderTypes.imu, self.bno.acceleration, 
-                                         self.bno.linear_acceleration, self.bno.quaternion, self.bno.gyro)
+        while 1:
+            timestamp = int(datetime.datetime.utcnow().timestamp())
+            orientation = MQTTOrientationPkt(timestamp, SenderTypes.imu, self.bno.acceleration, 
+                                            self.bno.linear_acceleration, self.bno.quaternion, self.bno.gyro)
 
-        log.debug(str(orientation))
-        self.publish(MqttTopics.ORIENTATION, str(orientation))
+            log.debug(str(orientation))
+            self.publish(MqttTopics.ORIENTATION, str(orientation))
 
-        # Run more or less 10 times per seconds
-        time.sleep(0.1)
+            # Run more or less 10 times per seconds
+            time.sleep(0.1)
 
 class IMU(BNO085IMU): pass
 imu = IMU()
