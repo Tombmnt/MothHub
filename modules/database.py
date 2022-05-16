@@ -77,4 +77,4 @@ class Database(MonginaDatabaseModule): pass
 
 log.basicConfig(level=log.INFO)
 db = Database()
-input("DB started, press enter to quit...")
+input("DB started, press enter to quit...\n")
