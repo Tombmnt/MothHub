@@ -79,7 +79,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                 )
                 spd_data.add_data_mul_dict({"speed_kmh": parsed_msg.sogk, "dir_mag": parsed_msg.cogm})
 
-                self.publish(MqttTopics.POSITION, str(spd_data))
+                self.publish(MqttTopics.SPEED, str(spd_data))
 
 class GPS(ZED_F9P_Hat_GPS): pass
 
