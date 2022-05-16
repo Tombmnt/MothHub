@@ -4,6 +4,7 @@ import json
 import logging as log
 import signal
 import sys
+import time
 from mongita import MongitaClientDisk
 from mongita.database import Database
 from mongita.collection import Collection
@@ -77,4 +78,6 @@ class Database(MonginaDatabaseModule): pass
 
 log.basicConfig(level=log.INFO)
 db = Database()
-input("DB started, press enter to quit...\n")
+
+while True:
+    time.sleep(0.1)
