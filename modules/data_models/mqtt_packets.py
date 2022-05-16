@@ -80,7 +80,14 @@ class MQTTSpeedPkt(MQTTPacket):
 class MQTTOrientationPkt(MQTTPacket):
     def __init__(self, 
         timestamp: int = DEFAULT_TIMESTAMP,
-        sender_type: str  = DEFAULT_SENDER_TYPE
+        sender_type: str  = DEFAULT_SENDER_TYPE, 
+        acceleration: "tuple(float, float, float)" = (0.0, 0.0, 0.0), # x, y, z, ms^2, constant acceleration (gravity + movement)
+        linear_acceleration: "tuple(float, float, float)" = (0.0, 0.0, 0.0), # x, y, z ms^2, dynamic acceleration (movement)
+        rotation: "tuple(float, float, float, float)" = (0.0, 0.0, 0.0, 0.0), # Quaternion, 
+        gyroscope: "tuple(float, float, float)" = (0.0, 0.0, 0.0) # x, y, z radian/sec
     ):
         super().__init__(timestamp, sender_type)
-        # TODO: Add pertinent attributes
+        self.acc_x, self.acc_y, self.acc_z = acceleration
+        self.lin_x, self.lin_y, self.lin_z = linear_acceleration
+        self.rot_w, self.rot_x, self.rot_y, self.rot_z = rotation
+        self.gyr_x, self.gyr_y, self.gyr_z = gyroscope
