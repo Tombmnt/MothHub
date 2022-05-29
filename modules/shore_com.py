@@ -30,7 +30,7 @@ class Serial_AT_Module:
         self.serial_connection = serial.Serial(serial_port, baud, timeout=30)
 
         self._sendCommand(AT_COMMANDS.MODE, AT_COMMANDS.PTP)
-        self._sendCommand(AT_COMMANDS.PTP, "RFCFG," + region_MHz + ",SF7,125,12,15,14,ON,OFF,OFF")
+        self._sendCommand(AT_COMMANDS.PTP, "RFCFG," + str(region_MHz) + ",SF7,125,12,15,14,ON,OFF,OFF")
         
         self.isReciever = (start_mode is MODES.RECIEVE)
         if self.isReciever:
