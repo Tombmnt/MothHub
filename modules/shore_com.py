@@ -1,6 +1,7 @@
 import json
 import logging as log
 from threading import Lock
+import time
 
 import serial
 import paho.mqtt.client as mqtt
@@ -70,10 +71,10 @@ class Serial_AT_Module:
         
 
 class LoRa_E5(MqttSubModule):
-    def __init__(self, region_MHz: float, start_mode: str, serial_port: str, baud: int = 9600, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
+    def __init__(self, region_MHz: float, serial_port: str, baud: int = 9600, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
         super().__init__(MqttTopics.ALL, mqtt_broker, mqtt_broker_port)
 
-        self.at_modem = Serial_AT_Module(serial_port, baud, region_MHz, start_mode)
+        self.at_modem = Serial_AT_Module(serial_port, baud, region_MHz, MODES.TRANSMIT)
 
         # Exceptionaly overwriting the on_message method of the mqtt client because we want it called on ANY topic.
         self.mqtt_clients[MqttTopics.ALL].client.on_message = self.on_message
@@ -83,3 +84,8 @@ class LoRa_E5(MqttSubModule):
         string_msg = json.dumps({msg.topic: msg.payload})
         self.at_modem.sendString(string_msg)
 
+log.basicConfig(level=log.DEBUG)
+lora = LoRa_E5(RF_REGION_MHZ.NORTH_AMERICA, "/dev/ttyUSB0")
+
+while(1):
+    time.sleep(5)
