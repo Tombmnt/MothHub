@@ -81,7 +81,7 @@ class LoRa_E5(MqttSubModule):
 
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
-        string_msg = json.dumps({msg.topic: msg.payload})
+        string_msg = json.dumps({msg.topic: str(msg.payload)})
         self.at_modem.sendString(string_msg)
 
 log.basicConfig(level=log.DEBUG)
