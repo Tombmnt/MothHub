@@ -57,15 +57,17 @@ class Serial_AT_Module:
 
         # TODO: a proper way to check that transaction is done
         line = self.serial_connection.readline()
-        line = self.serial_connection.readline()
+        #line = self.serial_connection.readline()
 
         self.command_in_use.release()
 
     def sendString(self, string) -> bool:
         if(not self.isReciever):
+            log.debug(f"AT_SEND: {string}")
             self._sendCommand(AT_COMMANDS.PTP, "TXLRSTR,\""+string+"\"")
             return True
         else:
+            log.debug(f"AT_SEND: trying to send in recieve mode.")
             return False
 
         
@@ -80,12 +82,14 @@ class LoRa_E5(MqttSubModule):
         self.mqtt_clients[MqttTopics.ALL].client.on_message = self.on_message
 
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
-        log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
-        string_msg = json.dumps({msg.topic: str(msg.payload)})
-        self.at_modem.sendString(string_msg)
+        log.debug(f"Recieved: [{msg.topic}]:{msg.payload.decode()}\n")
+        string_msg = "{\"" + str(msg.topic) + "\": " + msg.payload.decode() + "}"
+        self.at_modem.sendString(string_msg.replace('"', "'"))
 
-log.basicConfig(level=log.DEBUG)
-lora = LoRa_E5(RF_REGION_MHZ.NORTH_AMERICA, "/dev/ttyUSB0")
+#log.basicConfig(level=log.DEBUG)
+log.debug("Starting...")
+lora = LoRa_E5(RF_REGION_MHZ.NORTH_AMERICA, "COM4")
 
+log.debug("Starting sleep loop")
 while(1):
-    time.sleep(5)
+    time.sleep(0.5)

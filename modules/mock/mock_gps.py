@@ -33,7 +33,7 @@ class MockGPS(MqttPubModule):
         while(1):
             self.send_random_speed()
             self.send_random_position()
-            sleep(1)
+            sleep(0.1)
 
     # TODO: send random direction
 
