@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==7.1.2
+pylint==2.4.4
+numpy==1.21.6
+pyglet==1.5.23
