@@ -10,7 +10,7 @@ from adafruit_bno08x import \
     BNO_REPORT_ROTATION_VECTOR
 
 import logging as log
-from modules.data_models.mqtt_packets import MQTTOrientationPkt, SenderTypes
+from modules.data_models.mqtt_packets import MQTTOrientationPkt, PacketTypes
 
 from modules.mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
@@ -33,7 +33,7 @@ class BNO085IMU(MqttPubModule):
     def run(self):
         while 1:
             timestamp = int(datetime.datetime.utcnow().timestamp())
-            orientation = MQTTOrientationPkt(timestamp, SenderTypes.imu, self.bno.acceleration, 
+            orientation = MQTTOrientationPkt(timestamp, PacketTypes.imu, self.bno.acceleration, 
                                             self.bno.linear_acceleration, self.bno.quaternion, self.bno.gyro)
 
             log.debug(str(orientation))

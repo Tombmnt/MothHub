@@ -3,7 +3,7 @@ import serial
 import logging as log
 from pynmeagps import NMEAReader, NMEAMessage
 
-from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, SenderTypes
+from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, PacketTypes
 
 from .mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
@@ -40,7 +40,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
             # TODO: actuall logging 
             log.debug(f"{parsed_msg}")
 
-            pos_data = MQTTPositionPkt(sender_type=SenderTypes.gps)
+            pos_data = MQTTPositionPkt(sender_type=PacketTypes.gps_pos)
             dt: datetime.datetime = datetime.datetime.utcnow()
                 
             if(parsed_msg.msgID == NMEA_MESSAGE_RMC):
@@ -65,13 +65,13 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                 # The GGA message is the last (relevant) message we get for each data burst
                 self.publish(MqttTopics.POSITION, str(pos_data))
                 pos_data.reset_to_default()
-                pos_data.type = SenderTypes.gps
+                pos_data.type = PacketTypes.gps_pos
                 dt = datetime.datetime.utcnow()
 
             elif(parsed_msg.msgID == NMEA_MESSAGE_VTG):
                 spd_data = MQTTSpeedPkt(
                     timestamp = int(dt.timestamp()),
-                    sender_type = SenderTypes.gps,
+                    sender_type = PacketTypes.gps_spd,
                     speed = parsed_msg.sogn, # Speed by default in knots
                     speed_unit = parsed_msg.sognUnit,
                     direction = parsed_msg.cogt, # Course over groub by default in degree true

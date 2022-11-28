@@ -18,9 +18,11 @@ DEFAULT_DIRECTION = "0.0"
 DEFAULT_DIRECTION_UNIT = "T"
 
 @dataclass
-class SenderTypes:
-    gps = "gps",
+class PacketTypes:
+    gps_pos = "gps-pos"
+    gps_spd = "gps-spd"
     imu = "imu"
+    force = "force"
     other = "unknown"
 
 class MQTTPacket:
@@ -40,7 +42,7 @@ class MQTTPacket:
     def add_data_mul_dict(self, data_dict: dict):
         for n, v in data_dict.items():
             setattr(self, n, v)
-    
+
     def reset_to_default(self):
         dict = self.__dict__.copy()
         for attr in dict.keys():
