@@ -33,6 +33,13 @@ class MQTTPacket:
         self.time = timestamp
         self.type = sender_type
 
+    @classmethod #Second constructor
+    def from_payload(cls, payload: bytes):
+        obj = cls.__new__(cls)
+        data = json.loads(payload.decode("UTF-8"))
+        obj.add_data_mul_dict(data)
+        return obj
+
     def __str__(self) -> str:
         return json.dumps(self.__dict__)
     
