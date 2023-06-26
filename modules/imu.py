@@ -10,7 +10,7 @@ from adafruit_bno08x import \
     BNO_REPORT_ROTATION_VECTOR
 
 import logging as log
-from modules.data_models.mqtt_packets import MQTTOrientationPkt, PacketTypes
+from modules.data_models.mqtt_packets import MQTTOrientationPkt
 
 from modules.mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
@@ -18,8 +18,10 @@ from .mqtt_modules import MqttPubModule
 BNO085_I2C_ADDR = 0x4b
 
 class BNO085IMU(MqttPubModule):
-    def __init__(self, mqtt_broker: str = "localhost", mqtt_broker_port=1883) -> None:
+    def __init__(self, name: str, mqtt_broker: str = "localhost", mqtt_broker_port=1883) -> None:
         super().__init__([MqttTopics.ORIENTATION], mqtt_broker, mqtt_broker_port)
+        self._name = name
+
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.bno = BNO08X_I2C(self.i2c, address=BNO085_I2C_ADDR)
 
@@ -33,17 +35,17 @@ class BNO085IMU(MqttPubModule):
     def run(self):
         while 1:
             timestamp = int(datetime.datetime.utcnow().timestamp())
-            orientation = MQTTOrientationPkt(timestamp, PacketTypes.imu, self.bno.acceleration, 
+            orientation = MQTTOrientationPkt(timestamp, self._name, self.bno.acceleration, 
                                             self.bno.linear_acceleration, self.bno.quaternion, self.bno.gyro)
 
             log.debug(str(orientation))
             self.publish(MqttTopics.ORIENTATION, str(orientation))
 
             # Run more or less 10 times per seconds
-            time.sleep(0.1)
+            time.sleep(1)
 
 class IMU(BNO085IMU): pass
-imu = IMU()
+imu = IMU("HUB IMU")
 imu.run()
 
 input("Imu running, press any key to quit... \n")
