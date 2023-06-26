@@ -12,6 +12,7 @@ class MqttTopics:
     WIND_SPEED = "wind_speed"
     WIND_DIRECTION = "wind_direction"
     STRENGHT = "strength" # Strength/tension gages
+    STATUS = "status" # errors and reporting
 
 class MqttPubClient:
     def __init__(self, mqtt_topic: str, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
