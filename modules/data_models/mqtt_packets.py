@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import json
 from typing import Any
 
+
 # Default init values "defines"
 DEFAULT_TIMESTAMP = 0
 DEFAULT_SENDER_TYPE = "null"
@@ -16,6 +17,11 @@ DEFAULT_SPEED = 0.0
 DEFAULT_SPEED_UNIT = "N"
 DEFAULT_DIRECTION = "0.0"
 DEFAULT_DIRECTION_UNIT = "T"
+
+
+DEFAULT_NAME ="calyso_anemo"
+#DEFAULT_WIND_SPD = 0.0
+#DEFAULT_WIND_DIR = 0.0
 
 @dataclass
 class SenderTypes:
@@ -91,3 +97,19 @@ class MQTTOrientationPkt(MQTTPacket):
         self.lin_x, self.lin_y, self.lin_z = linear_acceleration
         self.rot_w, self.rot_x, self.rot_y, self.rot_z = rotation
         self.gyr_x, self.gyr_y, self.gyr_z = gyroscope
+
+
+
+class MQTTwindpkt(MQTTPacket):
+    def __init__(self,
+        timestamp: int = DEFAULT_TIMESTAMP,
+        sender_type: str = DEFAULT_SENDER_TYPE,
+        name: str = DEFAULT_NAME,
+        wind_spd: float = (0.0),
+        wind_dir: int = (0) 
+    ):
+
+        super().__init__(timestamp, sender_type)
+        DEFAULT_NAME = name
+        wind_speed=wind_spd
+        wind_direction =wind_dir

@@ -4,7 +4,8 @@ import asyncio
 import logging
 import paho.mqtt.client as mqtt
 
-from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, SenderTypes
+
+from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, SenderTypes,MQTTwindpkt
 from .mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
 from calypso_anemometer.core import CalypsoDeviceApi, Settings
@@ -26,14 +27,15 @@ def retry_policy(info: RetryInfo) -> RetryPolicyStrategy:
 
 @retry(retry_policy)
 async def calypso_subscribe_demo():
-    def process_reading(reading: CalypsoReading,client:MqttPubModule):
+    def process_reading(reading:CalypsoReading):
        
         reading.dump()
         
-        client.publish(reading)
+        client.publish(MQTTwindpkt().WIND,reading.asjson())
     
     async with CalypsoDeviceApi(settings=Settings(ble_discovery_timeout=5, ble_connect_timeout=20)) as calypso:
-        client = MqttPubModule()
+        client = MqttPubModule([MqttTopics.WIND])
+        
         await calypso.subscribe_reading(process_reading)
         await wait_forever()
         #await calypso.discover()
