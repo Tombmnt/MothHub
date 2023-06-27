@@ -1,7 +1,8 @@
-
 from dataclasses import dataclass
 import json
 from typing import Any
+from calypso_anemometer.core import CalypsoDeviceApi, Settings
+from calypso_anemometer.model import CalypsoReading
 
 
 # Default init values "defines"
@@ -28,6 +29,7 @@ class SenderTypes:
     gps = "gps",
     imu = "imu"
     other = "unknown"
+    wind ="wind"
 
 class MQTTPacket:
     def __init__(self, 
@@ -100,16 +102,16 @@ class MQTTOrientationPkt(MQTTPacket):
 
 
 
-class MQTTwindpkt(MQTTPacket):
+class MQTTwindPkt(MQTTPacket):
     def __init__(self,
         timestamp: int = DEFAULT_TIMESTAMP,
         sender_type: str = DEFAULT_SENDER_TYPE,
-        name: str = DEFAULT_NAME,
+        #name: str = DEFAULT_NAME,
         wind_spd: float = (0.0),
         wind_dir: int = (0) 
     ):
 
         super().__init__(timestamp, sender_type)
-        DEFAULT_NAME = name
-        wind_speed=wind_spd
-        wind_direction =wind_dir
+        #DEFAULT_NAME = name
+        self.wind_speed=wind_spd
+        self.wind_direction =wind_dir
