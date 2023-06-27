@@ -12,6 +12,8 @@ from bson import ObjectId
 
 import paho.mqtt.client as mqtt
 
+import requests
+
 from modules.mqtt_utils import MqttTopics
 from .mqtt_modules import MqttSubModule
 
@@ -28,6 +30,10 @@ from .mqtt_modules import MqttSubModule
 #     - [document] mqtt position packet (one document per packet recieved)
 #   - ... (one collection per mqtt topic + races)
 #     - ... (one document per related mqtt packet recieved)
+
+DB_BASE_URL = "http://christobrary.net:30800/rafale/data"
+DB_LAST_TMSTMP = "latest"
+CONTENT_TYPE = 'Content-Type: application/json'
 
 class DatabaseService():
     def __init__(self, db_name: str) -> None:
@@ -56,6 +62,9 @@ class DatabaseService():
 
 class MonginaDatabaseModule(MqttSubModule):
     def __init__(self, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
+
+        log.warning("THIS IS A DEPRECATED VERSION OF THE DATABASE, DO NOT USE!")
+
         super().__init__([MqttTopics.ALL], mqtt_broker, mqtt_broker_port)
         self.db_srv = DatabaseService("rafale3")
 
@@ -68,7 +77,12 @@ class MonginaDatabaseModule(MqttSubModule):
 
     def on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         log.debug(f"Recieved: [{msg.topic}]:{msg.payload}\n")
-        self.db_srv.insert_data(msg.topic, json.loads(msg.payload))
+        payload = json.loads(msg.payload)
+        self.db_srv.insert_data(msg.topic, payload)
+
+        # send data to the database, ided by timestamps
+        requests.post(f"{DB_BASE_URL}/{msg.topic}/{payload['time']}", json=payload, headers=CONTENT_TYPE)
+        requests.post(f"{DB_BASE_URL}/{msg.topic}/{DB_LAST_TMSTMP}",  json=payload, headers=CONTENT_TYPE)
 
     def exit_gracefully(self):
         self.db_srv._db_client.close()
