@@ -118,14 +118,12 @@ class MQTTOrientationPkt(MQTTPacket):
 class MQTTwindPkt(MQTTPacket):
     def __init__(self,
         timestamp: int = DEFAULT_TIMESTAMP,
-        sender_type: str = DEFAULT_SENDER_TYPE,
-        #name: str = DEFAULT_NAME,
+        sender_name: str  = DEFAULT_SENDER_NAME, 
         wind_spd: float = (0.0),
         wind_dir: int = (0) 
     ):
 
-        super().__init__(timestamp, sender_type)
-        #DEFAULT_NAME = name
+        super().__init__(timestamp, PacketTypes.wind, sender_name)
         self.wind_speed=wind_spd
         self.wind_direction =wind_dir
 
