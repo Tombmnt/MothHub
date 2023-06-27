@@ -70,6 +70,8 @@ def main():
 
     log.warning("Threads ended, exiting!")
 
+    local_DB.exit_gracefully()
+
     exit(0)
 
 if __name__ == "__main__":
