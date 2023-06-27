@@ -3,11 +3,13 @@ import logging as log
 from paho.mqtt import client as mqtt_client
 from time import sleep
 import argparse
+import asyncio
 
 from modules.gps import GPS
 from modules.imu import IMU
 from modules.local_archiving import Database as Local_DB
 from modules.mqtt_utils import DEFAULT_BROKER, DEFAULT_PORT
+from modules.anemometer import calypso_subscribe_demo
 
 def isMQTTBrokerUp(broker: str = DEFAULT_BROKER, port: int = DEFAULT_PORT):
     broker_up = False
@@ -49,9 +51,10 @@ def main():
         log.basicConfig(level=log.INFO)
 
     log.info("Checking for MQTT Broker...")
-    if not isMQTTBrokerUp(args.broker, args.port):
-        log.warning(f"No MQTT broker found at {args.broker}:{args.port}, exiting.")
-        exit(1)
+    # TODO: fix
+    #if not isMQTTBrokerUp(args.broker, args.port):
+    #    log.warning(f"No MQTT broker found at {args.broker}:{args.port}, exiting.")
+    #    exit(1)
 
     log.info("Broker found, Starting HUB...")    
     gps = GPS("HUB GPS")
@@ -60,13 +63,17 @@ def main():
 
     gps_thread = Thread(target=gps.run)
     imu_thread = Thread(target=imu.run)
+    wind_thread = Thread(target=asyncio.run, args=(calypso_subscribe_demo(),))
+
     gps_thread.start()
     imu_thread.start()
+    wind_thread.start()
 
     log.info("Threads started. Waiting end...")
 
     gps_thread.join()
     imu_thread.join()
+    wind_thread.join()
 
     log.warning("Threads ended, exiting!")
 
