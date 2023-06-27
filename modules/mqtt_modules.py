@@ -4,7 +4,7 @@ from modules.mqtt_utils import MqttPubClient, MqttSubClient
 
 class MqttSubModule:
     def __init__(self, mqtt_topics: "list[str]", mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883, start=True) -> None:
-        self.mqtt_clients: dict[str, MqttSubClient] = {}
+        self.mqtt_clients: "dict[str, MqttSubClient]" = {}
         
         for topic in mqtt_topics:
             self.mqtt_clients[topic] = MqttSubClient(topic, mqtt_broker, mqtt_broker_port, start)
@@ -14,7 +14,7 @@ class MqttSubModule:
 
 class MqttPubModule:
     def __init__(self, mqtt_topics: "list[str]", mqtt_broker: str = "localhost", mqtt_broker_port = 1883) -> None:
-        self.mqtt_clients: dict[str, MqttPubClient] = {}
+        self.mqtt_clients: "dict[str, MqttPubClient]" = {}
         
         for topic in mqtt_topics:
             self.mqtt_clients[topic] = MqttPubClient(topic, mqtt_broker, mqtt_broker_port)

@@ -1,24 +1,16 @@
 #anemometer python code
 import asyncio
-import logging
 import datetime
 
-from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, PacketTypes, MQTTwindPkt
+from modules.data_models.mqtt_packets import MQTTwindPkt
 from .mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
 from calypso_anemometer.core import CalypsoDeviceApi, Settings
 from calypso_anemometer.model import CalypsoReading
 from calypso_anemometer.util import wait_forever
 from calypso_anemometer.exception import*
-from calypso_anemometer.util import setup_logging
 
-from aioretry import  retry,RetryPolicyStrategy,RetryInfo
-
-logger = logging.getLogger(__name__)
-#setup_logging(level=logging.DEBUG)
-#dt = datetime.datetime.utcnow()
-#parsed_msg: NMEAMessage = None
-# _, parsed_msg = self.nmea_stream.read()
+from aioretry import  retry, RetryPolicyStrategy, RetryInfo
 
 def retry_policy(info: RetryInfo) -> RetryPolicyStrategy:
     return False, (info.fails - 1) % 3 * 0.1
@@ -27,14 +19,13 @@ def retry_policy(info: RetryInfo) -> RetryPolicyStrategy:
 async def calypso_subscribe_demo():
     def process_reading(reading:CalypsoReading):
        
-        reading.dump()
+        #reading.dump()
         dt = datetime.datetime.utcnow()
         wind_Pkt= MQTTwindPkt(
                 timestamp = int(dt.timestamp()), #int
-                sender_name = "WIND"
+                sender_name = "WIND",
                 wind_spd = reading.wind_speed,  #float
                 wind_dir = reading.wind_direction #int
-                      
             )
         client.publish(MqttTopics.WIND, str(wind_Pkt))
 

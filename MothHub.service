@@ -1,0 +1,15 @@
+[Unit]
+Description=MothHub Startup Service
+After=network.target
+After=mosquitto.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=pi
+ExecStart=/home/pi/MothHub/.env/bin/python3 /home/pi/MothHub/MothHub.py
+
+[Install]
+WantedBy=multi-user.target
