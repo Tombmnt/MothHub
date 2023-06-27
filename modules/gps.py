@@ -96,6 +96,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
 
 class GPS(ZED_F9P_Hat_GPS): pass
 
-log.basicConfig(level=log.INFO)
-gps = GPS(name="HUB GPS")
-gps.run()
+if __name__ == "__main__":
+    log.basicConfig(level=log.DEBUG)
+    gps = GPS(name="HUB GPS")
+    gps.run()

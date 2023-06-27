@@ -45,7 +45,9 @@ class BNO085IMU(MqttPubModule):
             time.sleep(1)
 
 class IMU(BNO085IMU): pass
-imu = IMU("HUB IMU")
-imu.run()
 
-input("Imu running, press any key to quit... \n")
+if __name__ == "__name__":
+    imu = IMU("HUB IMU")
+    imu.run()
+
+    input("Imu running, press any key to quit... \n")
