@@ -31,10 +31,6 @@ from .mqtt_modules import MqttSubModule
 #   - ... (one collection per mqtt topic + races)
 #     - ... (one document per related mqtt packet recieved)
 
-DB_BASE_URL = "http://christobrary.net:30800/rafale/data"
-DB_LAST_TMSTMP = "latest"
-CONTENT_TYPE = 'Content-Type: application/json'
-
 class DatabaseService():
     def __init__(self, db_name: str) -> None:
         self.name = db_name
@@ -61,12 +57,9 @@ class DatabaseService():
         return list(coll.find(time_range_filter))
 
 class MonginaDatabaseModule(MqttSubModule):
-    def __init__(self, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
-
-        log.warning("THIS IS A DEPRECATED VERSION OF THE DATABASE, DO NOT USE!")
-
+    def __init__(self, name: str, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
         super().__init__([MqttTopics.ALL], mqtt_broker, mqtt_broker_port)
-        self.db_srv = DatabaseService("rafale3")
+        self.db_srv = DatabaseService(name)
 
         # Setup gracefull exit on kill        
         signal.signal(signal.SIGINT, self.exit_gracefully)
@@ -80,18 +73,15 @@ class MonginaDatabaseModule(MqttSubModule):
         payload = json.loads(msg.payload)
         self.db_srv.insert_data(msg.topic, payload)
 
-        # send data to the database, ided by timestamps
-        requests.post(f"{DB_BASE_URL}/{msg.topic}/{payload['time']}", json=payload, headers=CONTENT_TYPE)
-        requests.post(f"{DB_BASE_URL}/{msg.topic}/{DB_LAST_TMSTMP}",  json=payload, headers=CONTENT_TYPE)
-
     def exit_gracefully(self):
         self.db_srv._db_client.close()
         sys.exit(0)
 
 class Database(MonginaDatabaseModule): pass
 
-log.basicConfig(level=log.INFO)
-db = Database()
+if __name__ == "__main__":
+    log.basicConfig(level=log.DEBUG)
+    db = Database("rafale3_local_archive")
 
-while True:
-    time.sleep(0.1)
+    while True:
+        time.sleep(0.1)
