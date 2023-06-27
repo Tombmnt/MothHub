@@ -2,6 +2,9 @@ import logging as log
 from dataclasses import dataclass
 import paho.mqtt.client as mqtt
 
+DEFAULT_BROKER = "localhost"
+DEFAULT_PORT = 1883
+
 @dataclass
 class MqttTopics:
     ALL = "#"
@@ -12,9 +15,10 @@ class MqttTopics:
     WIND = "wind"
    
     STRENGHT = "strength" # Strength/tension gages
+    STATUS = "status" # errors and reporting
 
 class MqttPubClient:
-    def __init__(self, mqtt_topic: str, mqtt_broker: str = "localhost", mqtt_broker_port: int = 1883) -> None:
+    def __init__(self, mqtt_topic: str, mqtt_broker: str = DEFAULT_BROKER, mqtt_broker_port: int = DEFAULT_PORT) -> None:
         self.mqtt_topic = mqtt_topic
         
         self.client = mqtt.Client()
@@ -37,7 +41,7 @@ class MqttPubClient:
         log.debug(f"Published: [{self.mqtt_topic}]:{message}->{ret}\n")
 
 class MqttSubClient:
-    def __init__(self, mqtt_topic: str, mqtt_broker: str = "localhost", mqtt_broker_port = 1883) -> None:
+    def __init__(self, mqtt_topic: str, mqtt_broker: str = DEFAULT_BROKER, mqtt_broker_port = DEFAULT_PORT, start=True) -> None:
         self.mqtt_topic = mqtt_topic
         
         self.client = mqtt.Client()
@@ -47,7 +51,8 @@ class MqttSubClient:
         self.client.on_message = self.on_message
 
         self.client.connect_async(mqtt_broker, mqtt_broker_port, 60)
-        self.client.loop_start()
+        if start:
+            self.client.loop_start()
 
     # The callback for when the client receives a CONNACK response from the server.
     def on_connect(self, client: mqtt.Client, userdata, flags, rc):
