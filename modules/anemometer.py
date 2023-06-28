@@ -1,6 +1,7 @@
 #anemometer python code
 import asyncio
 import datetime
+import logging as log
 
 from modules.data_models.mqtt_packets import MQTTwindPkt
 from .mqtt_utils import MqttTopics
@@ -20,6 +21,7 @@ async def calypso_subscribe_demo():
     def process_reading(reading:CalypsoReading):
        
         #reading.dump()
+        
         dt = datetime.datetime.utcnow()
         wind_Pkt= MQTTwindPkt(
                 timestamp = int(dt.timestamp()), #int
@@ -30,9 +32,11 @@ async def calypso_subscribe_demo():
         client.publish(MqttTopics.WIND, str(wind_Pkt))
 
     async with CalypsoDeviceApi(settings=Settings(ble_discovery_timeout=5, ble_connect_timeout=20)) as calypso:
+        log.info("connected creating mqtt client")
         client = MqttPubModule([MqttTopics.WIND])
         
         await calypso.subscribe_reading(process_reading)
+        log.info("subscribe waiting forever")
         await wait_forever()
         #await calypso.discover()
         #await calypso.connect()
@@ -40,4 +44,5 @@ async def calypso_subscribe_demo():
         await calypso.about()
 
 if __name__ == "__main__":  # pragma: nocover
+    log.basicConfig(level=log.DEBUG)
     asyncio.run(calypso_subscribe_demo())
