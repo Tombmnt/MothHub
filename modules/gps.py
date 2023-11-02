@@ -8,9 +8,11 @@ from modules.data_models.mqtt_packets import MQTTPositionPkt, MQTTSpeedPkt, Pack
 from .mqtt_utils import MqttTopics
 from .mqtt_modules import MqttPubModule
 
-ZED_F9P_SERIAL_PORT = "/dev/ttyS0"
-ZED_F9P_SERIAL_BAUD = 38400
-ZED_F9P_I2C_ADDR = 0x84
+
+#initalization 
+ZED_F9P_SERIAL_PORT = "/dev/ttyS0"  #port
+ZED_F9P_SERIAL_BAUD = 38400  #speed
+ZED_F9P_I2C_ADDR = 0x84        #adresse I2C utilisée
 
 # Available message types: 
 # ['$GNRMC', '$GNVTG', '$GNGGA', '$GNGSA', '$GPGSV', '$GLGSV', '$GAGSV', '$GBGSV', '$GNGLL']
@@ -34,7 +36,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
         self.serial_con = serial.Serial(serial_port, baud, timeout=5)
         self.nmea_stream = NMEAReader(self.serial_con)
 
-    def run(self): # This is an infinite loop pooling the gps
+    def run(self): # This is an infinite loop pooling the gps et publiant les données sur le serveur MQTT 
         pos_data = MQTTPositionPkt(pkt_type=PacketTypes.gps_pos, sender_name=self._name)
         
         while True:
@@ -46,7 +48,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
 
                 dt: datetime.datetime = datetime.datetime.utcnow()
                     
-                if(parsed_msg.msgID == NMEA_MESSAGE_RMC):
+                if(parsed_msg.msgID == NMEA_MESSAGE_RMC): #informations minimales de navigation
                     pos_data = MQTTPositionPkt(pkt_type=PacketTypes.gps_pos, sender_name=self._name)
                     # RMC message is the first relevant message we get per data burst, we can use it to send the timestamp for the whole burst.
                     pos_data.time = int(dt.timestamp()) # time as a unix timestamp
@@ -56,13 +58,13 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                     pos_data.latNS = parsed_msg.NS
                     pos_data.add_data("nav_status", parsed_msg.navStatus)
 
-                elif(parsed_msg.msgID == NMEA_MESSAGE_GGA):
+                elif(parsed_msg.msgID == NMEA_MESSAGE_GGA):  #qualité de la position GPS
                     pos_data.add_data("quality", parsed_msg.quality)
                     pos_data.add_data("sat_nbr", parsed_msg.numSV)
                     pos_data.add_data("h_precision", parsed_msg.HDOP) #in meters
                     pos_data.add_data("altitude", parsed_msg.alt)
                     pos_data.add_data("alt_unit", parsed_msg.altUnit)
-                    pos_data.add_data("geoid_sep", parsed_msg.sep)
+                    pos_data.add_data("geoid_sep", parsed_msg.sep)            #Séparation Géoide entre géoide et surface de la terre 
                     pos_data.add_data("geoid_sep_unit", parsed_msg.sepUnit)
 
                     # The GGA message is the last (relevant) message we get for each data burst
@@ -71,7 +73,7 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                     pos_data.type = PacketTypes.gps_pos
                     dt = datetime.datetime.utcnow()
 
-                elif(parsed_msg.msgID == NMEA_MESSAGE_VTG):
+                elif(parsed_msg.msgID == NMEA_MESSAGE_VTG): #info navigation maritime
                     spd_data = MQTTSpeedPkt(
                         timestamp = int(dt.timestamp()),
                         pkt_type = PacketTypes.gps_spd,
@@ -95,6 +97,8 @@ class ZED_F9P_Hat_GPS(MqttPubModule):
                 self.publish(MqttTopics.STATUS, str(status_data))
 
 class GPS(ZED_F9P_Hat_GPS): pass
+
+#PUBLICATION SUR LE RESEAU LOCAL --> Pas d'adresse IP
 
 if __name__ == "__main__":
     log.basicConfig(level=log.DEBUG)
